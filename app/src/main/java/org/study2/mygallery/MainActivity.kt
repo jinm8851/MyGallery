@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.checkSelfPermission
 import org.study2.mygallery.databinding.ActivityMainBinding
 import java.util.jar.Manifest
+import kotlin.concurrent.timer
 
 
 /*저장된 미디어데이터는 콘텐츠 프로바이더를 샤용해 다른 애ㅃ에 공개될수 있습니다
@@ -117,5 +118,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
     Log.d("MainActivity","getAllPhotos: $uris")
+
+//    ViewPager2 어뎁터 연결
+    val adapter = MyPagerAdapter(supportFragmentManager,lifecycle)
+    adapter.uris = uris
+
+    binding.viewPager.adapter = adapter
+
+
+//    자동슬라이더 구현하기 3초마다 실행되는 타이머
+    timer(period = 3000){
+//        타이머가 백르라운드 스레드로 동작해 유아이를 변경하도록 runOnUiThread {} 로 감쌈니다.
+    runOnUiThread {
+        if (binding.viewPager.currentItem<adapter.itemCount -1) {  // 현재 페이지가 마지막 페이지가 아니면
+            binding.viewPager.currentItem = binding.viewPager.currentItem + 1  //다음페이지로 변경하고 마지막이면
+        }else {
+            binding.viewPager.currentItem = 0  //첫페이지로 변경합니다
+        }
+    }
+}
     }
 }
